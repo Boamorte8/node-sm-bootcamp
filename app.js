@@ -22,8 +22,10 @@ app.set('views', 'views');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+const USER_ID = 1;
+
 app.use((req, res, next) => {
-  User.findByPk('0891831d-8f17-4176-9cc0-58a14c25b0c1')
+  User.findByPk(USER_ID)
     .then((user) => {
       req.user = user;
       next();
@@ -50,7 +52,7 @@ sequelize
   // .sync({ force: true })
   .sync()
   .then((result) => {
-    return User.findByPk('0891831d-8f17-4176-9cc0-58a14c25b0c1');
+    return User.findByPk(USER_ID);
   })
   .then((user) => {
     if (!user) {

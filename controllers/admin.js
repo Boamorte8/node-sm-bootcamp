@@ -81,6 +81,7 @@ exports.postEditProduct = (req, res, next) => {
 exports.getProducts = (req, res, next) => {
   // Product.fetchAll((products) => {
   // Product.findAll()
+  console.log('user', req.user);
   req.user
     .getProducts()
     .then((products) => {
