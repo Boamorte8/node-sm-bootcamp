@@ -4,4 +4,4 @@ This project is to apply the knowledge of the course of [Udemy](https://www.udem
 
 ## Topics
 
-- SQL using sequelize
+- SQL using [sequelize](http://docs.sequelizejs.com/)
