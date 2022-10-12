@@ -5,3 +5,4 @@ This project is to apply the knowledge of the course of [Udemy](https://www.udem
 ## Topics
 
 - SQL using [sequelize](http://docs.sequelizejs.com/)
+- MongoDB using first mongoDB driver after Mongoose
