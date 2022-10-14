@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 
 require('./util/env');
 const errorController = require('./controllers/error');
-// const User = require('./models/user');
+const User = require('./models/user');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const mongoConnect = require('./util/database').mongoConnect;
@@ -19,16 +19,16 @@ app.set('views', 'views');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-const USER_ID = 1;
+const USER_ID = '63470cd05122a6f26270aa25';
 
-// app.use((req, res, next) => {
-//   // User.findByPk(USER_ID)
-//   //   .then((user) => {
-//   //     req.user = user;
-//   //     next();
-//   //   })
-//   //   .catch((err) => console.log(err));
-// });
+app.use((req, res, next) => {
+  User.findById(USER_ID)
+    .then((user) => {
+      req.user = new User(user.name, user.email, user.cart, user._id);
+      next();
+    })
+    .catch((err) => console.log(err));
+});
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
