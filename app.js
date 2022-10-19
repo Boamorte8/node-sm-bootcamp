@@ -6,7 +6,7 @@ const errorController = require('./controllers/error');
 const User = require('./models/user');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
-const mongoConnect = require('./util/database').mongoConnect;
+const { connectDB } = require('./util/database');
 
 const PORT = process.env.PORT || 3000;
 
@@ -19,12 +19,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-const USER_ID = '63470cd05122a6f26270aa25';
+const USER_ID = '634f57ca031018319f30bde8';
 
 app.use((req, res, next) => {
   User.findById(USER_ID)
     .then((user) => {
-      req.user = new User(user.name, user.email, user.cart, user._id);
+      req.user = user;
       next();
     })
     .catch((err) => console.log(err));
@@ -35,7 +35,21 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-mongoConnect(() => {
-  app.listen(PORT);
-  console.log(`Server listening at port ${PORT}`);
+connectDB(process.env.MONGODB_URL).then(() => {
+  User.findOne()
+    .then((user) => {
+      if (!user) {
+        const user = new User({
+          name: 'Esteban',
+          email: 'esteban@test.com',
+          cart: {
+            items: [],
+          },
+        });
+        user.save();
+      }
+      app.listen(PORT);
+      console.log(`Server listening at port ${PORT}`);
+    })
+    .catch((err) => console.log(err));
 });

@@ -1,7 +1,7 @@
 const Product = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll()
+  Product.find()
     .then((products) => {
       res.render('shop/product-list', {
         prods: products,
@@ -14,16 +14,6 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
-  // Product.findAll({
-  //   where: {
-  //     id: prodId,
-  //   },
-  // })
-  //   .then((product) => {
-  //     console.log('🚀 ~ file: shop.js ~ line 29 ~ .then ~ product', product);
-  //   })
-  //   .catch((err) => console.log(err));
-  // Product.findByPk(prodId)
   Product.findById(prodId)
     .then((product) => {
       res.render('shop/product-detail', {
@@ -36,7 +26,7 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-  Product.fetchAll()
+  Product.find()
     .then((products) => {
       res.render('shop/index', {
         prods: products,
@@ -49,8 +39,16 @@ exports.getIndex = (req, res, next) => {
 
 exports.getCart = (req, res, next) => {
   req.user
-    .getCart()
-    .then((products) => {
+    .populate('cart.items.productId')
+    .then((user) => {
+      const products = user.cart.items.map(({ productId, quantity }) => ({
+        title: productId.title,
+        description: productId.description,
+        price: productId.price,
+        imageUrl: productId.imageUrl,
+        quantity,
+      }));
+      console.log(products);
       res.render('shop/cart', {
         path: '/cart',
         pageTitle: 'Your Cart',
@@ -62,11 +60,9 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
-  console.log('prodId', prodId);
   Product.findById(prodId)
     .then((product) => req.user.addToCart(product))
-    .then((result) => {
-      console.log(result);
+    .then(() => {
       res.redirect('/cart');
     })
     .catch((err) => console.log(err));
