@@ -43,11 +43,19 @@ userSchema.methods.addToCart = function (product) {
   return this.save();
 };
 
+userSchema.methods.removeFromCart = function (productId) {
+  this.cart.items = this.cart.items.filter(
+    (item) => item.productId.toString() !== productId.toString()
+  );
+  return this.save();
+};
+
+userSchema.methods.clearCart = function () {
+  this.cart.items = [];
+  return this.save();
+};
+
 module.exports = mongoose.model('User', userSchema);
-
-// const getDB = require('../util/database').getDB;
-
-// const { ObjectId } = mongodb;
 
 // class User {
 //   constructor(name, email, cart, id) {
@@ -173,5 +181,3 @@ module.exports = mongoose.model('User', userSchema);
 //     return db.collection('users').findOne({ _id: new ObjectId(userId) });
 //   }
 // }
-
-// module.exports = User;
